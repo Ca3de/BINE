@@ -87,3 +87,7 @@ path = "src/validation_v78.rs"
 name = "test_whitening"
 path = "src/test_whitening.rs"
 
+[[bin]]
+name = "validation_v79"
+path = "src/validation_v79.rs"
+
