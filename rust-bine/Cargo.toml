@@ -45,6 +45,10 @@ path = "src/validation_v5.rs"
 name = "validation_v6"
 path = "src/validation_v6.rs"
 
+[[bin]]
+name = "validation_v7"
+path = "src/validation_v7.rs"
+
 [profile.release]
 opt-level = 3
 lto = true
