@@ -58,3 +58,8 @@ path = "src/reinforcement_demo.rs"
 opt-level = 3
 lto = true
 codegen-units = 1
+
+[[bin]]
+name = "complete_benchmarks"
+path = "src/complete_benchmarks.rs"
+
