@@ -63,3 +63,7 @@ codegen-units = 1
 name = "complete_benchmarks"
 path = "src/complete_benchmarks.rs"
 
+[[bin]]
+name = "validation_v75"
+path = "src/validation_v75.rs"
+
