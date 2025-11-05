@@ -79,3 +79,11 @@ path = "src/validation_v77.rs"
 name = "diagnose_differential"
 path = "src/diagnose_differential.rs"
 
+[[bin]]
+name = "validation_v78"
+path = "src/validation_v78.rs"
+
+[[bin]]
+name = "test_whitening"
+path = "src/test_whitening.rs"
+
