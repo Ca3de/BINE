@@ -21,6 +21,10 @@ path = "src/main.rs"
 name = "bine_compare"
 path = "src/comparison.rs"
 
+[[bin]]
+name = "bine_v2_bench"
+path = "src/bench_v2.rs"
+
 [profile.release]
 opt-level = 3
 lto = true
