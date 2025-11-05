@@ -91,3 +91,11 @@ path = "src/test_whitening.rs"
 name = "validation_v79"
 path = "src/validation_v79.rs"
 
+[[bin]]
+name = "validation_v80"
+path = "src/validation_v80.rs"
+
+[[bin]]
+name = "test_hash_direct"
+path = "src/test_hash_direct.rs"
+
