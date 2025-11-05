@@ -8,6 +8,7 @@ license = "MIT"
 
 [dependencies]
 # No external dependencies - pure Rust std only
+# Note: rand is part of std in no_std compatible way
 
 [lib]
 name = "bine"
@@ -48,6 +49,10 @@ path = "src/validation_v6.rs"
 [[bin]]
 name = "validation_v7"
 path = "src/validation_v7.rs"
+
+[[bin]]
+name = "reinforcement_demo"
+path = "src/reinforcement_demo.rs"
 
 [profile.release]
 opt-level = 3
