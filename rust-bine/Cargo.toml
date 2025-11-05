@@ -67,3 +67,15 @@ path = "src/complete_benchmarks.rs"
 name = "validation_v75"
 path = "src/validation_v75.rs"
 
+[[bin]]
+name = "validation_v76"
+path = "src/validation_v76.rs"
+
+[[bin]]
+name = "validation_v77"
+path = "src/validation_v77.rs"
+
+[[bin]]
+name = "diagnose_differential"
+path = "src/diagnose_differential.rs"
+
