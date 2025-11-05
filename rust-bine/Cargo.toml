@@ -29,6 +29,18 @@ path = "src/bench_v2.rs"
 name = "rigorous_tests"
 path = "src/rigorous_tests.rs"
 
+[[bin]]
+name = "validation_v3"
+path = "src/validation_v3.rs"
+
+[[bin]]
+name = "validation_v4"
+path = "src/validation_v4.rs"
+
+[[bin]]
+name = "validation_v5"
+path = "src/validation_v5.rs"
+
 [profile.release]
 opt-level = 3
 lto = true
