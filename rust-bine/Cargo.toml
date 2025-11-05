@@ -25,6 +25,10 @@ path = "src/comparison.rs"
 name = "bine_v2_bench"
 path = "src/bench_v2.rs"
 
+[[bin]]
+name = "rigorous_tests"
+path = "src/rigorous_tests.rs"
+
 [profile.release]
 opt-level = 3
 lto = true
