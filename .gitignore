@@ -50,3 +50,4 @@ htmlcov/
 *.bin
 *.enc
 keys/
+rust-bine/target/
