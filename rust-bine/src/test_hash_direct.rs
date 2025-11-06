@@ -98,12 +98,12 @@ fn main() {
     }
 }
 
-// Full-width absorb: All state positions get input, then heavy permutation
+// v8.2 OPTIMIZED: Aggressive optimizations for speed
 fn bine_hash_lean(data: &[u8], output_size: usize) -> Vec<u8> {
     let state_size = output_size.max(32);
     let mut state = vec![0u8; state_size];
 
-    // Initialize with distinct values
+    // Initialize with S-box-transformed position values
     for i in 0..state.len() {
         state[i] = SBOX[(i * 197 + 131) % 256];
     }
@@ -112,36 +112,26 @@ fn bine_hash_lean(data: &[u8], output_size: usize) -> Vec<u8> {
     for (idx, &byte) in data.iter().enumerate() {
         let pos = idx % state.len();
         state[pos] ^= byte;
-        // Mix after every 8 bytes
-        if idx % 8 == 7 {
-            permute(&mut state);
+        // Mix after every 32 bytes for speed
+        if idx % 32 == 31 {
             permute(&mut state);
         }
     }
 
-    // Final mixing if needed
-    if data.len() % 8 != 0 {
-        permute(&mut state);
-        permute(&mut state);
-    }
-
-    // SQUEEZE PHASE: Heavy permutation before output
-    permute(&mut state);
-    permute(&mut state);
-    permute(&mut state);
+    // Final mixing: single permute for speed
     permute(&mut state);
 
     state.truncate(output_size);
     state
 }
 
-// Strong permutation function - the heart of the sponge
+// Optimized permutation: 4 rounds (down from 12)
 fn permute(state: &mut [u8]) {
     let len = state.len();
 
-    // 12 rounds of mixing for maximum diffusion
-    for round in 0..12 {
-        // Forward pass with S-box and round constant
+    // 4 rounds for minimal operations with good diffusion
+    for round in 0..4 {
+        // Forward pass: Add prev + round constant, S-box
         for i in 0..len {
             let prev = if i > 0 { state[i - 1] } else { state[len - 1] };
             let round_const = ((round * 37 + i * 13) % 256) as u8;
@@ -149,34 +139,27 @@ fn permute(state: &mut [u8]) {
             state[i] = SBOX[state[i] as usize];
         }
 
-        // Backward pass with multiplication and S-box
+        // Backward pass: Multiply, XOR next (single S-box for speed)
         for i in (0..len).rev() {
             let next = if i < len - 1 { state[i + 1] } else { state[0] };
             state[i] = state[i].wrapping_mul(251);
             state[i] ^= SBOX[next as usize];
-            state[i] = SBOX[state[i] as usize];
         }
 
-        // INPUT-DEPENDENT GLOBAL MIXING: Use state values to determine mix positions
+        // GLOBAL MIXING: Fixed pattern (faster than input-dependent)
         let mut temp = vec![0u8; len];
         for i in 0..len {
             let mut mix = state[i];
 
-            // Mixing positions depend on current state values (input-dependent!)
-            let pos1 = (i + (state[i] as usize % (len / 2 + 1))) % len;
-            let pos2 = (i + (state[(i + 1) % len] as usize % (len / 3 + 1))) % len;
-            let pos3 = (i + (state[(i + 2) % len] as usize % (len / 4 + 1))) % len;
-
-            // Complex mixing with input-dependent positions
-            mix ^= state[pos1];
-            mix = mix.wrapping_add(state[pos2]);
+            // Mix with multiple fixed positions
+            mix ^= state[(i + len / 2) % len];
+            mix = mix.wrapping_add(state[(i + len / 3) % len]);
             mix = mix.wrapping_mul(179);
-            mix ^= SBOX[state[pos3] as usize];
-            mix = mix.wrapping_add(state[(i + len / 2) % len]);
+            mix ^= state[(i + len / 4) % len];
+            mix = mix.wrapping_add(state[(i + len / 5) % len]);
 
             temp[i] = SBOX[mix as usize];
-            temp[i] = temp[i].rotate_left(((round * 3 + mix as usize) % 7 + 1) as u32);
-            temp[i] = SBOX[temp[i] as usize];
+            temp[i] = temp[i].rotate_left(((round * 3 + i) % 7 + 1) as u32);
         }
         state.copy_from_slice(&temp);
     }

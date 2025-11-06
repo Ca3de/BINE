@@ -23,7 +23,7 @@ fn main() {
 
 fn test_differential() {
     let salt = b"differential_test_salt_32!!!!!";
-    let test_count = 256;
+    let test_count = 255;  // Fixed: 256 as u8 = 0, causing identical inputs
 
     println!("Testing {} input pairs with 100 samples each...", test_count);
     println!();
@@ -35,7 +35,7 @@ fn test_differential() {
 
     for delta in 1..=test_count {
         let mut bit_differences = [0u32; 256];
-        let samples = 100;
+        let samples = 100;  // Keep low for speed
 
         for sample in 0..samples {
             let input1 = vec![sample as u8; 32];
