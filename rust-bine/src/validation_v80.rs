@@ -35,7 +35,7 @@ fn test_differential() {
 
     for delta in 1..=test_count {
         let mut bit_differences = [0u32; 256];
-        let samples = 100;  // Keep low for speed
+        let samples = 100;  // Balance speed and statistics
 
         for sample in 0..samples {
             let input1 = vec![sample as u8; 32];

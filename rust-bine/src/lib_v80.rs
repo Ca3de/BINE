@@ -567,8 +567,8 @@ impl BineHasherV80 {
     }
 }
 
-// v8.3: ULTRA-FAST Custom BINE Hash - Maximum speed with acceptable security
-// 3 rounds, NO intermediate permutes, NO temp allocation
+// v8.4: IMPROVED - Better security while maintaining speed
+// 6 rounds with enhanced mixing
 fn bine_hash_lean(data: &[u8], output_size: usize) -> Vec<u8> {
     let state_size = output_size.max(32);
     let mut state = vec![0u8; state_size];
@@ -578,25 +578,25 @@ fn bine_hash_lean(data: &[u8], output_size: usize) -> Vec<u8> {
         state[i] = SBOX[(i * 197 + 131) % 256];
     }
 
-    // ABSORB ALL INPUT (no intermediate permutes for speed)
+    // ABSORB ALL INPUT
     for (idx, &byte) in data.iter().enumerate() {
         let pos = idx % state.len();
         state[pos] ^= byte;
     }
 
-    // Single 3-round permutation at end
+    // Single 5-round permutation (double was too slow)
     bine_permute(&mut state);
 
     state.truncate(output_size);
     state
 }
 
-// Ultra-fast permutation: 3 rounds, NO allocations
+// Enhanced permutation: 6 rounds with stronger mixing
 fn bine_permute(state: &mut [u8]) {
     let len = state.len();
 
-    for round in 0..3 {
-        // Forward pass
+    for round in 0..6 {
+        // Forward pass with S-box
         for i in 0..len {
             let prev = if i > 0 { state[i - 1] } else { state[len - 1] };
             state[i] = state[i].wrapping_add(prev).wrapping_add(((round * 37 + i * 13) % 256) as u8);
@@ -609,9 +609,16 @@ fn bine_permute(state: &mut [u8]) {
             state[i] = state[i].wrapping_mul(251) ^ SBOX[next as usize];
         }
 
-        // Global mix (in-place, no allocation)
+        // Enhanced global mix - three far positions for better diffusion
         for i in 0..len {
-            state[i] ^= state[(i + len / 2) % len];
+            let far1 = state[(i + len / 2) % len];
+            let far2 = state[(i + len / 3) % len];
+            let far3 = state[(i + len / 4) % len];
+            state[i] ^= far1;
+            state[i] = SBOX[state[i] as usize];
+            state[i] = state[i].wrapping_add(far2);
+            state[i] = state[i].wrapping_mul(179);
+            state[i] ^= far3;
             state[i] = SBOX[state[i] as usize];
         }
     }
